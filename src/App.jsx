@@ -177,13 +177,61 @@
 
 // export default App;
 
+// import { useState } from "react";
+
+// function App() {
+//   const [pw, setPw] = useState("");
+//   const [show, setShow] = useState(false);
+
+//   const isWeak = pw.length > 0 && pw.length < 8;
+
+//   return (
+//     <div
+//       style={{
+//         height: "100vh",
+//         display: "flex",
+//         flexDirection: "column",
+//         justifyContent: "center",
+//         alignItems: "center",
+//         fontFamily: "sans-serif",
+//         gap: 12,
+//       }}
+//     >
+//       <h1> 비밀번호 입력</h1>
+
+//       <div style={{ display: "flex", gap: 8 }}>
+//         <input
+//           type={show ? "text" : "password"}
+//           value={pw}
+//           onChange={(e) => setPw(e.target.value)}
+//           placeholder="8자 이상"
+//           style={{ padding: 10, width: 240 }}
+//         />
+
+//         <button onClick={() => setShow((prev) => !prev)}>
+//           {show ? "숨기기" : "보기"}
+//         </button>
+//       </div>
+
+//       <p style={{ color: isWeak ? "red" : "black" }}>
+//         길이: {pw.lenth} {isWeak && " (8자 이상 권장)"}
+//       </p>
+
+//       <button onClick={() => setPw("")} disabled={pw.length === 0}>
+//         초기화
+//       </button>
+//     </div>
+//   );
+// }
+
+// export default App;
+
 import { useState } from "react";
 
 function App() {
-  const [pw, setPw] = useState("");
-  const [show, setShow] = useState(false);
+  const [count, setCount] = useState(0);
 
-  const isWeak = pw.length > 0 && pw.length < 8;
+  const isNegative = count < 0;
 
   return (
     <div
@@ -194,32 +242,24 @@ function App() {
         justifyContent: "center",
         alignItems: "center",
         fontFamily: "sans-serif",
-        gap: 12,
+        gap: 20,
       }}
     >
-      <h1> 비밀번호 입력</h1>
+      <h1>카운터 연습</h1>
 
-      <div style={{ display: "flex", gap: 8 }}>
-        <input
-          type={show ? "text" : "password"}
-          value={pw}
-          onChange={(e) => setPw(e.target.value)}
-          placeholder="8자 이상"
-          style={{ padding: 10, width: 240 }}
-        />
+      <h2
+        style={{
+          color: isNegative ? "red" : "black",
+        }}
+      >
+        {count}
+      </h2>
 
-        <button onClick={() => setShow((prev) => !prev)}>
-          {show ? "숨기기" : "보기"}
-        </button>
+      <div style={{ display: "flex", gap: 10 }}>
+        <button onClick={() => setCount((prev) => prev - 1)}>감소</button>
+        <button onClick={() => setCount((prev) => prev + 1)}>증가</button>
+        <button onClick={() => setCount((prev) => 0)}>초기화</button>
       </div>
-
-      <p style={{ color: isWeak ? "red" : "black" }}>
-        길이: {pw.lenth} {isWeak && " (8자 이상 권장)"}
-      </p>
-
-      <button onClick={() => setPw("")} disabled={pw.length === 0}>
-        초기화
-      </button>
     </div>
   );
 }
