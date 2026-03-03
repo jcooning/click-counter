@@ -247,16 +247,30 @@ function App() {
     >
       <h1>카운터 연습</h1>
 
-      <h2
+      {/* <h2
         style={{
           color: isNegative ? "red" : "black",
+        }}
+      >
+        {count}
+      </h2> */}
+
+      <h2
+        style={{
+          color: count < 0 ? "red" : count >= 10 ? "green" : "black",
         }}
       >
         {count}
       </h2>
 
       <div style={{ display: "flex", gap: 10 }}>
-        <button onClick={() => setCount((prev) => prev - 1)}>감소</button>
+        {/* <button onClick={() => setCount((prev) => prev - 1)}>감소</button> */}
+        <button
+          onClick={() => setCount((prev) => prev - 1)}
+          disabled={count === 0}
+        >
+          감소
+        </button>
         <button onClick={() => setCount((prev) => prev + 1)}>증가</button>
         <button onClick={() => setCount((prev) => 0)}>초기화</button>
       </div>
