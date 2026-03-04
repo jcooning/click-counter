@@ -320,93 +320,161 @@
 
 // export default App;
 
-import { useState } from "react";
+// 
 
-function App() {
-  const [answer, setAnswer] = useState(Math.floor(Math.random() * 100) + 1);
-  const [guess, setGuess] = useState("");
-  const [message, setMessage] = useState("숫자를 입력해 보세요!");
-  const [tries, setTries] = useState(0);
-  const [color, setColor] = useState("#ffffff");
+import { useMemo, useState } from "react";
 
-  const checkNumber = () => {
-    const number = Number(guess);
-    if (!number) return;
+function getRandomHexColor() {
+  return (
+    "#" +
+    Math.floor(Math.random() * 16777215)
+      .toString(16)
+      .padStart(6,"0")
+  );
+}
 
-    setTries((prev) => prev + 1);
-
-    if (number === answer) {
-      setMessage("정답!");
-    } else if (number > answer) {
-      setMessage("DOWN");
-    } else {
-      setMessage("UP");
-    }
-
-    setGuess("");
-  };
-
-  const resetGame = () => {
-    setAnswer(Math.floor(Math.random() * 100) + 1);
-    setMessage("새 게임 시작!");
-    setTries(0);
-    setGuess("");
-  };
- const changeColor = () => {
-  const randomColor =
-    "#" + Math.floor(Math.random() * 16777215).toString(16);
-
-  setColor(randomColor);
-
-  const r = parseInt(randomColor.substr(1, 2), 16);
-  const g = parseInt(randomColor.substr(3, 2), 16);
-  const b = parseInt(randomColor.substr(5, 2), 16);
+function getTextColorForBg(hex) {
+  const r = parseInt(hex.slice(1,3), 16);
+  const g = parseInt(hex.slice(3,5), 16);
+  const b = parseInt(hex.slice(5,7), 16);
 
   const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  return brightness > 125 ? "#000000" : "#ffffff";
+}
 
-  setTextColor(brightness > 125 ? "#000000" : "#ffffff");
+function pickAnswer() {
+  return Math.floor(Math.random() *100) +1;
+}
+
+export default function App() {
+  // 배경색 + 글자색
+  const [bgColor, setBgColor] = useState("#ffffff");
+  const [textColor, setTextColor] = useState("#000000");
+
+  // 숫자 맞추기
+  const [answer, setAnswer] = useState(() => pickAnswer());
+  const [guess, setGuess] = useState("");
+  const [tries, setTries] = useState(0);
+  const [message, setMessage] = useState("1~100 사이 숫자를 입력해 보세요!");
+
+  const isValidGuess = useMemo(() => {
+    const n = Number(guess);
+    return Number.isInteger(n) && n >= 1 && n <= 100;
+  }, [guess]);
+  
+  const resetGame = () => {
+      setAnswer(pickAnswer());
+      setGuess("");
+      setTries(0);
+      setMessage("새 게임 시작! 1~100 사이 숫자를 입력해 보세요!");
+  };
+
+  const changeColor = () => {
+  const nextBg = getRandomHexColor();
+  setBgColor(nextBg);
+  setTextColor(getTextColorForBg(nextBg));
 };
 
-  const [textColor, setTextColor] =useState("#000000");
+  const checkNumber = () => {
+    if (!isValidGuess) {
+      setMessage(" 1~100 사이 정수만 입력해줘!");
+      return;
+    }
+
+    const n = Number(guess);
+    setTries((t) => t+1);
+
+    if (n === answer) {
+      setMessage("정답!");
+      return;
+    }
+    if (n < answer) {
+      setMessage("더 큰수!");
+      return;
+    }
+      setMessage("더 작은수!");
+  };
+
+  const onEnter = (e) => {
+    if (e.key === "Enter") checkNumber();
+  };
 
   return (
     <div
       style={{
+        backgroundColor: bgColor,
+        color: textColor,
         height: "100vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        gap: 20,
+        gap: 14,
         fontFamily: "sans-serif",
       }}
-    >
-      <h1>숫자 맞추기 게임</h1>
-      <h2>{message}</h2>
-      <p>시도횟수: {tries}</p>
-
-      <input
-        type="number"
-        value={guess}
-        onChange={(e) => setGuess(e.target.value)}
-        placeholder="1~100 입력"
-      />
-
-      <button onClick={checkNumber}>확인</button>
-      <button onClick={resetGame}>다시 시작</button>
-  backgroundColor: color,
-  color: textColor,
-  height: "100vh",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-}}
       >
-      <button onClick={changeColor}>
-        배경색 바꾸기
-      </button>
-    </div>
-  );
-}
+      <h1 style={{ margin:0 }}>숫자 맞추기 게임</h1>
+      <h2 style={{ margin:0 }}>{message}</h2>
+      <div style={{ opacity: 0.85 }}>시도횟수: {tries}</div>
 
-export default App;
+      <div style={{ display: "flex", gap:10, alignItems: "center" }}>
+          <input
+            type="number"
+            value={guess}
+            onChange={(e) => setGuess(e.target.value)}
+            onKeyDown={onEnter}
+            placeholder="1~100"
+            style={{
+              width:140,
+              padding: "10px 12px",
+              borderRadius: 10,
+              border: "1px solid rgba(0,0,0,0.2)",
+            }}
+            />
+            <button
+              onClick={checkNumber}
+              disabled={!isValidGuess}
+              style={{
+                  padding: "10px 14px",
+                  borderRadius: 10,
+                  border: "1px solid rgba(0,0,0,0.2)",
+                  cursor: isValidGuess ? "pointer" : "not-allowed",
+              }}
+              >
+                확인
+              </button>
+      </div>
+
+      <div style={{ display: "flex", gap: 10}}>
+        <button
+          onClick={resetGame}
+          style={{
+            padding: "10px 14px",
+            borderRadius: 10,
+            border: "1px solid rgba(0,0,0,0.2)",
+            cursor: "pointer",
+          }}
+          >
+            다시 시작
+        </button>
+
+        <button
+          onClick={changeColor}
+          style={{
+            padding: "10px 14px",
+            borderRadius: 10,
+            border: "1px solid rgba(0,0,0,0.2)",
+            cursor: "pointer",
+          }}
+          >
+            배경색 바꾸기
+          </button>
+
+      </div>
+
+      <div style={{ fontSize: 12, opacity: 0.7 }}>
+          (팁) Enter로도 확인 가능
+      </div>
+      </div>
+      );
+    }
