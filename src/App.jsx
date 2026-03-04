@@ -247,6 +247,60 @@
 //     >
 //       <h1>카운터 연습</h1>
 
+//       {/* <h2
+//         style={{
+//           color: isNegative ? "red" : "black",
+//         }}
+//       >
+//         {count}
+//       </h2> */}
+
+//       <h2
+//         style={{
+//           color: count < 0 ? "red" : count >= 10 ? "green" : "black",
+//         }}
+//       >
+//         {count}
+//       </h2>
+
+//       <div style={{ display: "flex", gap: 10 }}>
+//         {/* <button onClick={() => setCount((prev) => prev - 1)}>감소</button> */}
+//         <button
+//           onClick={() => setCount((prev) => prev - 1)}
+//           disabled={count === 0}
+//         >
+//           감소
+//         </button>
+//         <button onClick={() => setCount((prev) => prev + 1)}>증가</button>
+//         <button onClick={() => setCount((prev) => 0)}>초기화</button>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default App;
+
+// import { useState } from "react";
+
+// function App() {
+//   const [count, setCount] = useState(0);
+
+//   const isNegative = count < 0;
+
+//   return (
+//     <div
+//       style={{
+//         height: "100vh",
+//         display: "flex",
+//         flexDirection: "column",
+//         justifyContent: "center",
+//         alignItems: "center",
+//         fontFamily: "sans-serif",
+//         gap: 20,
+//       }}
+//     >
+//       <h1>카운터 연습</h1>
+
 //       <h2
 //         style={{
 //           color: isNegative ? "red" : "black",
@@ -269,8 +323,35 @@
 import { useState } from "react";
 
 function App() {
+  const [answer, setAnswer] = useState(Math.floor(Math.random() * 100) + 1);
+  const [guess, setGuess] = useState("");
+  const [message, setMessage] = useState("숫자를 입력해 보세요!");
+  const [tries, setTries] = useState(0);
   const [color, setColor] = useState("#ffffff");
 
+  const checkNumber = () => {
+    const number = Number(guess);
+    if (!number) return;
+
+    setTries((prev) => prev + 1);
+
+    if (number === answer) {
+      setMessage("정답!");
+    } else if (number > answer) {
+      setMessage("DOWN");
+    } else {
+      setMessage("UP");
+    }
+
+    setGuess("");
+  };
+
+  const resetGame = () => {
+    setAnswer(Math.floor(Math.random() * 100) + 1);
+    setMessage("새 게임 시작!");
+    setTries(0);
+    setGuess("");
+  };
  const changeColor = () => {
   const randomColor =
     "#" + Math.floor(Math.random() * 16777215).toString(16);
@@ -291,6 +372,28 @@ function App() {
   return (
     <div
       style={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 20,
+        fontFamily: "sans-serif",
+      }}
+    >
+      <h1>숫자 맞추기 게임</h1>
+      <h2>{message}</h2>
+      <p>시도횟수: {tries}</p>
+
+      <input
+        type="number"
+        value={guess}
+        onChange={(e) => setGuess(e.target.value)}
+        placeholder="1~100 입력"
+      />
+
+      <button onClick={checkNumber}>확인</button>
+      <button onClick={resetGame}>다시 시작</button>
   backgroundColor: color,
   color: textColor,
   height: "100vh",
