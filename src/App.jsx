@@ -226,40 +226,82 @@
 
 // export default App;
 
+// import { useState } from "react";
+
+// function App() {
+//   const [count, setCount] = useState(0);
+
+//   const isNegative = count < 0;
+
+//   return (
+//     <div
+//       style={{
+//         height: "100vh",
+//         display: "flex",
+//         flexDirection: "column",
+//         justifyContent: "center",
+//         alignItems: "center",
+//         fontFamily: "sans-serif",
+//         gap: 20,
+//       }}
+//     >
+//       <h1>카운터 연습</h1>
+
+//       <h2
+//         style={{
+//           color: isNegative ? "red" : "black",
+//         }}
+//       >
+//         {count}
+//       </h2>
+
+//       <div style={{ display: "flex", gap: 10 }}>
+//         <button onClick={() => setCount((prev) => prev - 1)}>감소</button>
+//         <button onClick={() => setCount((prev) => prev + 1)}>증가</button>
+//         <button onClick={() => setCount((prev) => 0)}>초기화</button>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default App;
+
 import { useState } from "react";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [color, setColor] = useState("#ffffff");
 
-  const isNegative = count < 0;
+ const changeColor = () => {
+  const randomColor =
+    "#" + Math.floor(Math.random() * 16777215).toString(16);
+
+  setColor(randomColor);
+
+  const r = parseInt(randomColor.substr(1, 2), 16);
+  const g = parseInt(randomColor.substr(3, 2), 16);
+  const b = parseInt(randomColor.substr(5, 2), 16);
+
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+  setTextColor(brightness > 125 ? "#000000" : "#ffffff");
+};
+
+  const [textColor, setTextColor] =useState("#000000");
 
   return (
     <div
       style={{
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        fontFamily: "sans-serif",
-        gap: 20,
-      }}
-    >
-      <h1>카운터 연습</h1>
-
-      <h2
-        style={{
-          color: isNegative ? "red" : "black",
-        }}
+  backgroundColor: color,
+  color: textColor,
+  height: "100vh",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+}}
       >
-        {count}
-      </h2>
-
-      <div style={{ display: "flex", gap: 10 }}>
-        <button onClick={() => setCount((prev) => prev - 1)}>감소</button>
-        <button onClick={() => setCount((prev) => prev + 1)}>증가</button>
-        <button onClick={() => setCount((prev) => 0)}>초기화</button>
-      </div>
+      <button onClick={changeColor}>
+        배경색 바꾸기
+      </button>
     </div>
   );
 }
